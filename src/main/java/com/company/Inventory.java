@@ -11,6 +11,9 @@ public class Inventory {
     private final Map<SodaItem, Long> sodaItemCount = new HashMap<>();
 
     public void addItem(final SodaItem item, final int numOfItems) {
+        if (numOfItems < 0) {
+            throw new IllegalArgumentException("Number of items cannot be negative");
+        }
         Long itemCount = sodaItemCount.getOrDefault(item, 0L);
         itemCount += numOfItems;
         sodaItemCount.put(item, itemCount);
