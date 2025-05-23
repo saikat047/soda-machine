@@ -5,7 +5,6 @@ import com.company.Inventory;
 import com.company.item.SodaItem;
 import com.company.item.SodaItemFactory;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -50,6 +49,18 @@ class CommandServiceTest {
     }
 
     @Test
+    void createCommand_insertTextAsMoney_returnsNoCommand() {
+        Optional<Command<?>> commandOpt = commandService.createCommand("insert ASDF");
+        assertTrue(commandOpt.isEmpty());
+    }
+
+    @Test
+    void createCommand_insertNoParam_returnsNoCommand() {
+        Optional<Command<?>> commandOpt = commandService.createCommand("insert");
+        assertTrue(commandOpt.isEmpty());
+    }
+
+    @Test
     void createCommand_orderValidSoda_returnsOrderSodaCommand() {
         Optional<Command<?>> commandOpt = commandService.createCommand("order coke");
         assertTrue(commandOpt.isPresent());
@@ -66,15 +77,32 @@ class CommandServiceTest {
     }
 
     @Test
+    void createCommand_orderWithoutSoda_returnsEmpty() {
+        Optional<Command<?>> commandOpt = commandService.createCommand("order");
+        assertTrue(commandOpt.isEmpty());
+    }
+
+    @Test
     void createCommand_smsOrderValidSoda_returnsOrderSmsSodaCommand() {
         Optional<Command<?>> commandOpt = commandService.createCommand("sms order fanta");
 
-        assertTrue(commandOpt.isPresent(), "Command should be present for valid 'sms order SPRITE'");
+        assertTrue(commandOpt.isPresent());
         assertInstanceOf(OrderSmsSoda.class, commandOpt.get());
     }
 
     @Test
-    @DisplayName("createCommand: 'recall' command should create RecallMoney command")
+    void createCommand_smsOrderNoSoda_returnsEmpty() {
+        Optional<Command<?>> commandOpt = commandService.createCommand("sms order");
+        assertTrue(commandOpt.isEmpty());
+    }
+
+    @Test
+    void createCommand_smsOrderWrongSoda_returnsEmpty() {
+        Optional<Command<?>> commandOpt = commandService.createCommand("sms order ASDF");
+        assertTrue(commandOpt.isEmpty());
+    }
+
+    @Test
     void createCommand_recall_returnsRecallMoneyCommand() {
         Optional<Command<?>> commandOpt = commandService.createCommand("recall");
 
@@ -85,9 +113,14 @@ class CommandServiceTest {
     }
 
     @Test
-    @DisplayName("createCommand: unknown command should return empty Optional")
     void createCommand_unknownCommand_returnsEmptyOptional() {
         Optional<Command<?>> commandOpt = commandService.createCommand("who are you?");
+        assertTrue(commandOpt.isEmpty());
+    }
+    @Test
+
+    void createCommand_emptyCommand_returnsEmptyOptional() {
+        Optional<Command<?>> commandOpt = commandService.createCommand("");
         assertTrue(commandOpt.isEmpty());
     }
 }

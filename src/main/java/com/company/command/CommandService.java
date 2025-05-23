@@ -5,11 +5,18 @@ import com.company.Inventory;
 import com.company.item.SodaItem;
 import com.company.item.SodaItemFactory;
 import com.company.item.SodaItemType;
+import com.company.util.Utils;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class CommandService {
+
+    public static final String COMMAND_INSERT = "insert";
+    public static final String COMMAND_ORDER = "order";
+    public static final String COMMAND_SMS_ORDER = "sms order";
+    public static final String COMMAND_RECALL = "recall";
 
     private final Inventory inventory;
     private final Account account;
@@ -28,14 +35,17 @@ public class CommandService {
         // The amount of Reflection code needed to do this should be considered beyond the scope
         // of an interview exercise. It's highly encouraged for production quality code though
         // due to the flexibility of writing new commands.
-        if (command.startsWith("insert")) {
-            long money = Integer.parseInt(command.split(" ")[1]);
-            return Optional.of(new InsertMoney(inventory, account, money));
+        if (command.startsWith(COMMAND_INSERT)) {
+            Optional<String> argument = getCommandArgument(COMMAND_INSERT, command);
+            Optional<Long> moneyOpt = argument.map(CommandService::getMoneyToInsert).flatMap(Function.identity());
+            if (moneyOpt.isEmpty()) {
+                System.err.println("Invalid money amount: '" + argument.orElse("") + "'");
+            }
+            return moneyOpt.map(money -> new InsertMoney(inventory, account, money));
         }
-        else if (command.startsWith("order")) {
-            // split string on space
-            var sodaTypeName = command.split(" ")[1];
-            Optional<SodaItemType> sodaType = SodaItemType.findType(sodaTypeName);
+        else if (command.startsWith(COMMAND_ORDER)) {
+            Optional<String> argument = getCommandArgument(COMMAND_ORDER, command);
+            Optional<SodaItemType> sodaType = argument.map(SodaItemType::findType).flatMap(Function.identity());
             if (sodaType.isEmpty()) {
                 System.out.println("No such soda");
             }
@@ -45,9 +55,9 @@ public class CommandService {
                 return new OrderSoda(inventory, account, sodaItem);
             });
         }
-        else if (command.startsWith("sms order")) {
-            var sodaTypeName = command.split(" ")[2];
-            Optional<SodaItemType> sodaType = SodaItemType.findType(sodaTypeName);
+        else if (command.startsWith(COMMAND_SMS_ORDER)) {
+            Optional<String> argument = getCommandArgument(COMMAND_SMS_ORDER, command);
+            Optional<SodaItemType> sodaType = argument.map(SodaItemType::findType).flatMap(Function.identity());
             if (sodaType.isEmpty()) {
                 System.out.println("No such soda");
             }
@@ -57,12 +67,28 @@ public class CommandService {
                 return new OrderSmsSoda(inventory, account, sodaItem);
             });
         }
-        else if (command.equals("recall"))
+        else if (command.equals(COMMAND_RECALL))
         {
             return Optional.of(new RecallMoney(inventory, account));
         }
 
         return Optional.empty();
+    }
+
+    private static Optional<String> getCommandArgument(String commandPrefix, String command) {
+        String args = command.replaceAll(commandPrefix, "").replaceAll(" ", "");
+        if (!Utils.isEmpty(args)) {
+            return Optional.of(args);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<Long> getMoneyToInsert(String numberStr) {
+        try {
+            return Optional.of(Long.parseLong(numberStr));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 
     public void printHelp() {
