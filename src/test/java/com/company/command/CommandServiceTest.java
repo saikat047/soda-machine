@@ -61,6 +61,12 @@ class CommandServiceTest {
     }
 
     @Test
+    void createCommand_insertNegativeMoney_returnsNoCommand() {
+        Optional<Command<?>> commandOpt = commandService.createCommand("insert -1");
+        assertTrue(commandOpt.isEmpty());
+    }
+
+    @Test
     void createCommand_orderValidSoda_returnsOrderSodaCommand() {
         Optional<Command<?>> commandOpt = commandService.createCommand("order coke");
         assertTrue(commandOpt.isPresent());

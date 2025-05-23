@@ -85,7 +85,12 @@ public class CommandService {
 
     private static Optional<Long> getMoneyToInsert(String numberStr) {
         try {
-            return Optional.of(Long.parseLong(numberStr));
+            long number = Long.parseLong(numberStr);
+            if (number <= 0) {
+                System.err.println("Must insert positive number for money");
+                return Optional.empty();
+            }
+            return Optional.of(number);
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
