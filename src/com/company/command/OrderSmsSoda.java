@@ -6,7 +6,7 @@ import com.company.item.SodaItem;
 
 public class OrderSmsSoda extends Command<SodaItem> {
     public OrderSmsSoda(Inventory inventory, Account account, SodaItem sodaItem) {
-        super("sms order", inventory, account, sodaItem);
+        super(inventory, account, sodaItem);
     }
 
     @Override

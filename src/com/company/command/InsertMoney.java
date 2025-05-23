@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class InsertMoney extends Command<Long> {
     public InsertMoney(Inventory inventory, Account account, Long amount) {
-        super("insert", inventory, account, Objects.requireNonNull(amount));
+        super(inventory, account, Objects.requireNonNull(amount));
     }
 
     @Override

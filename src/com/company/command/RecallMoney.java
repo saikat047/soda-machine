@@ -5,7 +5,7 @@ import com.company.Inventory;
 
 public class RecallMoney extends Command<Void> {
     public RecallMoney(Inventory inventory, Account account) {
-        super("recall", inventory, account);
+        super(inventory, account, null);
     }
 
     @Override

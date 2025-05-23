@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class OrderSoda extends Command<SodaItem> {
     public OrderSoda(Inventory inventory, Account account, SodaItem sodaItem) {
-        super("order", inventory, account, Objects.requireNonNull(sodaItem));
+        super(inventory, account, Objects.requireNonNull(sodaItem));
     }
 
     @Override
