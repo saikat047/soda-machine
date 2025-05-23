@@ -7,9 +7,7 @@ import com.company.util.Utils;
 import java.util.Optional;
 import java.util.Scanner;
 
-public class SodaMachine
-{
-    private static int money;
+public class SodaMachine {
 
     private final CommandService commandService;
 

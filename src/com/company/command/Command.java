@@ -3,8 +3,6 @@ package com.company.command;
 import com.company.Account;
 import com.company.Inventory;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class Command<T> {
