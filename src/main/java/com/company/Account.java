@@ -4,11 +4,17 @@ public class Account {
 
     private long availableAmount;
 
+    public Account() {
+    }
+
     public long getBalance() {
         return availableAmount;
     }
 
     public void addAmount(long amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
         availableAmount += amount;
     }
 
