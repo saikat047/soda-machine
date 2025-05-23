@@ -23,7 +23,11 @@ public class CommandService {
 
     public Optional<Command<?>> createCommand(final String command) {
         Objects.requireNonNull(command);
-
+        // It is possible to entirely remove the following if-else-if conditions by using a
+        // Registry of command prefixes and their respective implementation classes.
+        // The amount of Reflection code needed to do this should be considered beyond the scope
+        // of an interview exercise. It's highly encouraged for production quality code though
+        // due to the flexibility of writing new commands.
         if (command.startsWith("insert")) {
             long money = Integer.parseInt(command.split(" ")[1]);
             return Optional.of(new InsertMoney(inventory, account, money));
